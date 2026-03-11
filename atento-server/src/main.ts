@@ -2,31 +2,35 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Global pipes for validation
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
-      transform: true, // Automatically transforms payloads to be objects typed according to their DTO classes
+      transform: true,
+      forbidNonWhitelisted: true,
     }),
   );
 
-  // Setup Swagger
+  app.useGlobalFilters(new AllExceptionsFilter());
+
   const config = new DocumentBuilder()
     .setTitle('ATento API')
-    .setDescription('ATento REST API Documentation')
+    .setDescription('ATento Citizen Report System API')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
-    
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, documentFactory);
 
-  app.enableCors(); // Enable CORS for frontend
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
 
-  await app.listen(process.env.PORT ?? 3000);
+  app.enableCors();
+
+  const port = process.env.PORT ?? 3000;
+  await app.listen(port);
+  console.log(`Application is running on: http://localhost:${port}/api`);
 }
 bootstrap();
