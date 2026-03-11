@@ -4,3 +4,6 @@ dist/
 .gemini/
 out-tsc/
 .vscode/
+.env
+*.log
+coverage/
