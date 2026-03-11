@@ -25,6 +25,9 @@ export class User implements IUser {
   })
   role: UserRole;
 
+  @Column({ nullable: true, select: false })
+  refreshToken: string | null;
+
   @CreateDateColumn()
   createdAt: Date;
 

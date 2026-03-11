@@ -18,5 +18,6 @@ export interface IAuthResponse {
     lastName: string;
     role: string;
   };
-  token: string;
+  accessToken: string;
+  refreshToken: string;
 }
