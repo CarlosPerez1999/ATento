@@ -6,5 +6,8 @@
     "atento-client",
     "atento-server",
     "shared"
-  ]
+  ],
+  "dependencies": {
+    "@angular/animations": "^21.2.3"
+  }
 }
