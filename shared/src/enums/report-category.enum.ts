@@ -1,0 +1,8 @@
+export enum ReportCategory {
+  POTHOLE = 'POTHOLE',
+  ELECTRICITY = 'ELECTRICITY',
+  WATER = 'WATER',
+  WASTE = 'WASTE',
+  PUBLIC_LIGHTING = 'PUBLIC_LIGHTING',
+  OTHER = 'OTHER'
+}
