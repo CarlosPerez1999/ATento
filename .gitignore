@@ -7,3 +7,10 @@ out-tsc/
 .env
 *.log
 coverage/
+*.tsbuildinfo
+shared/dist/
+shared/**/*.js
+shared/**/*.js.map
+shared/**/*.d.ts
+!shared/index.d.ts # Keep if explicitly needed, but usually not
+!shared/src/index.ts

@@ -12,7 +12,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
   constructor(private configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: configService.get<string>('JWT_REFRESH_SECRET'),
+      secretOrKey: configService.get<string>('JWT_REFRESH_SECRET') || 'super-secret-key-atento-refresh-2026',
       passReqToCallback: true,
     } as any);
   }

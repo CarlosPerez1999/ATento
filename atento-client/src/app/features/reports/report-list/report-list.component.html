@@ -1,0 +1,146 @@
+<div class="h-full flex flex-col gap-8 relative animate-in fade-in duration-700">
+  <p-confirmDialog></p-confirmDialog>
+
+  <!-- Header Section with Responsive Controls -->
+  <header class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-2 animate-fade-in">
+    <div>
+      <h1 class="text-4xl font-black text-surface-900 tracking-tight flex items-center gap-3">
+        <i class="pi pi-list text-blue-600"></i> Mis Reportes
+      </h1>
+      <p class="text-surface-500 mt-1 text-lg">Administra y haz seguimiento de tus incidencias.</p>
+    </div>
+    
+    <div class="flex items-center gap-3">
+        @if (!isMobile()) {
+            <p-selectButton [options]="viewOptions" [ngModel]="viewMode()" (ngModelChange)="viewMode.set($event)" 
+                            [allowEmpty]="false" optionLabel="value" optionValue="value" class="shadow-sm">
+                <ng-template #item let-item>
+                    <i [class]="item.icon"></i>
+                </ng-template>
+            </p-selectButton>
+        }
+        <button pButton pRipple routerLink="/citizen/reports/new" label="Nuevo Reporte" icon="pi pi-plus" 
+            class="p-button-primary shadow-lg shadow-blue-200 rounded-2xl px-6 py-4 bg-blue-700 border-none font-bold hover:-translate-y-1 transition-transform"></button>
+    </div>
+  </header>
+
+  <!-- Content Area -->
+  <div class="flex-1 flex flex-col gap-6">
+    
+    @if (viewMode() === 'table') {
+        <!-- Data Table View -->
+        <div class="bg-white rounded-4xl shadow-xl shadow-surface-200/50 border border-surface-100 overflow-hidden flex-1 flex flex-col animate-slide-up">
+            <p-table #dt [value]="reports() || []" [loading]="reportsResource.isLoading()" [paginator]="true" [rows]="10"
+                [tableStyle]="{ 'min-width': '60rem' }" responsiveLayout="stack"
+                [globalFilterFields]="['title', 'category', 'status']" 
+                styleClass="p-datatable-lg" 
+                [rowHover]="true" 
+                dataKey="id"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} reportes">
+
+                <ng-template pTemplate="header">
+                    <tr class="bg-surface-50/50 border-b! border-surface-100!">
+                    <th pSortableColumn="title" class="pl-8 py-6 bg-transparent text-surface-500 font-bold uppercase text-xs tracking-widest">Título <p-sortIcon field="title"></p-sortIcon></th>
+                    <th pSortableColumn="category" class="py-6 bg-transparent text-surface-500 font-bold uppercase text-xs tracking-widest">Categoría <p-sortIcon field="category"></p-sortIcon></th>
+                    <th pSortableColumn="status" class="py-6 bg-transparent text-surface-500 font-bold uppercase text-xs tracking-widest">Estado <p-sortIcon field="status"></p-sortIcon></th>
+                    <th pSortableColumn="createdAt" class="py-6 bg-transparent text-surface-500 font-bold uppercase text-xs tracking-widest">Fecha <p-sortIcon field="createdAt"></p-sortIcon></th>
+                    <th class="py-6 bg-transparent text-surface-500 font-bold uppercase text-xs tracking-widest text-center">Acciones</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-report>
+                    <tr class="border-b border-surface-100 group transition-all cursor-pointer hover:bg-surface-50/80" (click)="viewReport(report.id)">
+                    <td class="pl-8 py-6">
+                        <span class="font-bold text-surface-900 line-clamp-1 group-hover:text-blue-700 transition-colors">{{report.title}}</span>
+                    </td>
+                    <td class="py-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm"
+                                [ngClass]="getCategoryClass(report.category)">
+                                <i class="pi text-lg" [ngClass]="getCategoryIcon(report.category)"></i>
+                            </div>
+                            <span class="font-bold text-surface-700 tracking-tight">{{ getCategoryLabel(report.category) }}</span>
+                        </div>
+                    </td>
+                    <td class="py-6">
+                        <p-tag [value]="getSeverityLabel(report.status)" [severity]="getSeverity(report.status)" 
+                            styleClass="px-4 py-1.5 rounded-xl font-black text-[10px] uppercase shadow-sm"></p-tag>
+                    </td>
+                    <td class="py-6 text-surface-500 font-bold tracking-tight">
+                        {{report.createdAt | date:'dd MMM, yyyy'}}
+                    </td>
+                    <td class="py-6 text-center" (click)="$event.stopPropagation()">
+                        <div class="flex items-center justify-center gap-3">
+                            <button (click)="viewReport(report.id)" pButton pRipple icon="pi pi-eye" 
+                                    class="p-button-rounded p-button-text p-button-secondary p-button-sm action-btn-view transition-all shadow-sm"
+                                    title="Ver Detalles"></button>
+                            @if (report.status === 'PENDING') {
+                            <button (click)="cancelReport(report, $event)" pButton pRipple icon="pi pi-trash"
+                                class="p-button-rounded p-button-text p-button-danger p-button-sm action-btn-delete transition-all shadow-sm" title="Cancelar Reporte"></button>
+                            }
+                        </div>
+                    </td>
+                    </tr>
+                </ng-template>
+                
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="5" class="py-20 text-center">
+                            <div class="flex flex-col items-center justify-center opacity-40">
+                                <i class="pi pi-inbox text-6xl mb-4"></i>
+                                <p class="text-xl font-bold">No se encontraron reportes</p>
+                                <p class="text-sm">Empieza por crear uno nuevo.</p>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    } @else {
+        <!-- Grid View -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-slide-up">
+            @for (report of reports(); track report.id) {
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-surface-100 hover:shadow-xl hover:-translate-y-1 transition-all group cursor-pointer" 
+                    (click)="viewReport(report.id)">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm"
+                             [ngClass]="getCategoryClass(report.category)">
+                            <i class="pi text-xl" [ngClass]="getCategoryIcon(report.category)"></i>
+                        </div>
+                        <p-tag [value]="getSeverityLabel(report.status)" [severity]="getSeverity(report.status)" 
+                               styleClass="px-3 py-1 rounded-xl font-black text-[9px] uppercase shadow-sm"></p-tag>
+                    </div>
+                    
+                    <h3 class="text-xl font-extrabold text-surface-900 group-hover:text-blue-700 transition-colors line-clamp-2 mb-2">
+                        {{ report.title }}
+                    </h3>
+                    
+                    <p class="text-surface-500 text-sm line-clamp-3 mb-6 bg-surface-50 p-4 rounded-2xl border border-surface-100 min-h-[100px]">
+                        {{ report.description }}
+                    </p>
+                    
+                    <div class="flex items-center justify-between pt-4 border-t border-surface-50">
+                        <span class="text-xs font-bold text-surface-400">
+                             <i class="pi pi-calendar mr-1"></i> {{ report.createdAt | date:'shortDate' }}
+                        </span>
+                        <div class="flex gap-2" (click)="$event.stopPropagation()">
+                             <button (click)="viewReport(report.id)" pButton pRipple icon="pi pi-eye" 
+                                class="p-button-rounded p-button-text p-button-secondary p-button-sm action-btn-view shadow-sm"></button>
+                             @if (report.status === 'PENDING') {
+                                <button (click)="cancelReport(report, $event)" pButton pRipple icon="pi pi-trash"
+                                    class="p-button-rounded p-button-text p-button-danger p-button-sm action-btn-delete shadow-sm"></button>
+                             }
+                        </div>
+                    </div>
+                </div>
+            } @empty {
+                <div class="col-span-full py-20 bg-white rounded-4xl border border-dashed border-surface-200 flex flex-col items-center justify-center opacity-40">
+                    <i class="pi pi-inbox text-6xl mb-4"></i>
+                    <p class="text-xl font-bold">No se encontraron reportes</p>
+                </div>
+            }
+        </div>
+    }
+  </div>
+</div>

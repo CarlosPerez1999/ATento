@@ -20,7 +20,7 @@ export class ReportsController {
   @ApiOperation({ summary: 'Create a new citizen report' })
   @ApiResponse({ status: 201, description: 'Report created successfully' })
   create(@Body() createReportDto: CreateReportDto, @Req() req: Express.Request) {
-    const userId = req.user?.['sub'];
+    const userId = req.user?.['id'];
     return this.reportsService.create(createReportDto, userId);
   }
 
@@ -34,7 +34,7 @@ export class ReportsController {
   @Get('my-reports')
   @ApiOperation({ summary: 'Get reports created by the current user' })
   findMyReports(@Req() req: Express.Request) {
-    const userId = req.user?.['sub'];
+    const userId = req.user?.['id'];
     return this.reportsService.findMyReports(userId);
   }
 
@@ -51,7 +51,7 @@ export class ReportsController {
     @Body() updateReportDto: UpdateReportDto,
     @Req() req: Express.Request,
   ) {
-    const userId = req.user?.['sub'];
+    const userId = req.user?.['id'];
     const userRole = req.user?.['role'] as UserRole;
     return this.reportsService.update(id, updateReportDto, userId, userRole);
   }
@@ -59,7 +59,7 @@ export class ReportsController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a report' })
   remove(@Param('id', ParseUUIDPipe) id: string, @Req() req: Express.Request) {
-    const userId = req.user?.['sub'];
+    const userId = req.user?.['id'];
     const userRole = req.user?.['role'] as UserRole;
     return this.reportsService.remove(id, userId, userRole);
   }

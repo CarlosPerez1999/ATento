@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap, catchError, throwError } from 'rxjs';
-import { IAuthResponse, ILoginDto, IRegisterDto } from '@atento/shared';
+import { IAuthResponse, ILoginDto, IRegisterDto, IUser, UserRole } from '@atento/shared';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -11,10 +11,9 @@ export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
   
-  private apiUrl = 'http://localhost:3000/auth'; // Using local API for now
+  private apiUrl = 'http://localhost:3000/auth';
 
-  // Signal state management 
-  currentUser = signal<IAuthResponse['user'] | null>(null);
+  currentUser = signal<IUser | null>(null);
   isAuthenticated = signal<boolean>(false);
 
   constructor() {
@@ -46,9 +45,12 @@ export class AuthService {
     if (res.accessToken && res.refreshToken) {
       localStorage.setItem('accessToken', res.accessToken);
       localStorage.setItem('refreshToken', res.refreshToken);
-      this.currentUser.set(res.user);
+      this.currentUser.set(res.user as any); // Type cast to shared IUser
       this.isAuthenticated.set(true);
-      this.router.navigate(['/']); // Redirect to dashboard or home
+
+      const redirectUrl = res.user.role === UserRole.ADMIN ? '/admin/dashboard' : '/citizen/dashboard';
+      console.log('Login exitoso. Redirigiendo a:', redirectUrl);
+      this.router.navigate([redirectUrl]);
     }
   }
 
@@ -63,8 +65,20 @@ export class AuthService {
   private checkInitialSession() {
     const token = localStorage.getItem('accessToken');
     if (token) {
-        // Here we could decode the token or call a /me endpoint to rehydrate the user
-        this.isAuthenticated.set(true);
+      this.http.get<IUser>(`${this.apiUrl}/me`).subscribe({
+        next: (user) => {
+          this.currentUser.set(user);
+          this.isAuthenticated.set(true);
+          
+          // If on Login/Root, redirect to Dashboard
+          const currentUrl = window.location.pathname;
+          if (currentUrl === '/' || currentUrl.includes('/auth/login')) {
+             const redirectUrl = user.role === UserRole.ADMIN ? '/admin/dashboard' : '/citizen/dashboard';
+             this.router.navigate([redirectUrl]);
+          }
+        },
+        error: () => this.clearSession()
+      });
     }
   }
 }

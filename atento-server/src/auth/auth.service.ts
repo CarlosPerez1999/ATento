@@ -63,8 +63,10 @@ export class AuthService {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        role: user.role
-      },
+        role: user.role,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt
+      } as any,
       ...tokens
     };
   }
@@ -81,14 +83,29 @@ export class AuthService {
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
-          role: user.role
-        },
+          role: user.role,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt
+        } as any,
         ...tokens
       };
     } catch (error) {
       this.logger.error(`Registration error: ${error.message}`, error.stack);
       throw error;
     }
+  }
+
+  async getProfile(userId: string) {
+    const user = await this.usersService.findOne(userId);
+    return {
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: user.role,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt
+    } as any;
   }
 
   async logout(userId: string) {
@@ -115,8 +132,10 @@ export class AuthService {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        role: user.role
-      },
+        role: user.role,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt
+      } as any,
       ...tokens
     };
   }

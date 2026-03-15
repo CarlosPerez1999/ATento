@@ -36,10 +36,20 @@ export class AuthController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @Get('me')
+  @ApiOperation({ summary: 'Get current authenticated user profile' })
+  @ApiResponse({ status: 200, description: 'User profile returned' })
+  async getProfile(@Req() req: Express.Request) {
+    const userId = req.user?.['id'];
+    return this.authService.getProfile(userId);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Get('logout')
   @ApiOperation({ summary: 'Logout and clear refresh token' })
   async logout(@Req() req: Express.Request) {
-    const userId = req.user?.['sub'];
+    const userId = req.user?.['id'];
     return this.authService.logout(userId);
   }
 
@@ -48,7 +58,7 @@ export class AuthController {
   @Get('refresh')
   @ApiOperation({ summary: 'Refresh access token using refresh token' })
   async refreshTokens(@Req() req: Express.Request) {
-    const userId = req.user?.['sub'];
+    const userId = req.user?.['id'] || req.user?.['sub'];
     const refreshToken = req.user?.['refreshToken'];
     return this.authService.refreshTokens(userId, refreshToken);
   }

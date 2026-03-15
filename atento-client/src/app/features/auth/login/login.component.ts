@@ -55,8 +55,8 @@ export class LoginComponent {
     const { email, password } = this.loginForm.value;
 
     this.authService.login({ email: email!, password: password! }).subscribe({
-      next: () => {
-        this.notificationService.success('Bienvenido de nuevo, Ciudadano', 'Ingreso Exitoso');
+      next: (res) => {
+        this.notificationService.success(`Bienvenido de nuevo, ${res.user.firstName}`, 'Ingreso Exitoso');
         this.isLoading.set(false);
       },
       error: (err) => {
