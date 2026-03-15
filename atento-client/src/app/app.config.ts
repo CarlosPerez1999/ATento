@@ -17,11 +17,11 @@ const MyPreset = definePreset(Aura, {
             200: '{blue.200}',
             300: '{blue.300}',
             400: '{blue.400}',
-            500: '#1d4ed8',
-            600: '{blue.600}',
-            700: '{blue.700}',
-            800: '{blue.800}',
-            900: '{blue.900}',
+            500: '{blue.700}',
+            600: '{blue.800}',
+            700: '{blue.900}',
+            800: '{blue.950}',
+            900: '{blue.950}',
             950: '{blue.950}'
         },
         secondary: {
@@ -84,7 +84,9 @@ const MyPreset = definePreset(Aura, {
     components: {
         button: {
             root: {
-                borderRadius: '0.75rem'
+                borderRadius: '0.75rem',
+                paddingX: '1rem',
+                paddingY: '0.625rem'
             }
         },
         dialog: {
@@ -144,7 +146,7 @@ export const appConfig: ApplicationConfig = {
                 darkModeSelector: '.dark',
                 cssLayer: {
                     name: 'primeng',
-                    order: 'tailwind-base, primeng, tailwind-utilities'
+                    order: 'theme, base, primeng, components, utilities'
                 }
             }
         }
