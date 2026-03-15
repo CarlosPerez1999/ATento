@@ -5,11 +5,12 @@
        <i class="pi pi-arrow-left"></i> Volver a mis reportes
     </a>
     <h1 class="text-3xl font-extrabold text-surface-900 tracking-tight">Crear Nuevo Reporte</h1>
-    <p class="mt-1 uppercase text-xs font-bold tracking-widest text-blue-600">Formulario Sincronizado por Signals</p>
+    <p class="mt-1 uppercase text-xs font-bold tracking-widest text-blue-600">Geolocalización Ciudadana en Tiempo Real</p>
   </header>
 
   <div class="bg-white rounded-2xl shadow-sm border border-surface-200 p-6 md:p-10 flex flex-col gap-10">
       
+      <!-- Section 1: Content -->
       <section>
           <div class="flex items-center gap-3 mb-6">
              <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-black flex items-center justify-center italic">1</div>
@@ -50,9 +51,122 @@
           </div>
       </section>
 
+      <!-- Section 2: Location -->
+      <section class="border-t border-surface-100 pt-10">
+          <div class="flex items-center justify-between mb-6">
+              <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-black flex items-center justify-center italic">2</div>
+                  <h2 class="text-xl font-bold text-surface-900">Ubicación exacta</h2>
+              </div>
+              @if (locationData()) {
+                  <span class="text-xs font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full flex items-center gap-1">
+                      <i class="pi pi-check-circle"></i> Localizado
+                  </span>
+              }
+          </div>
+
+          <!-- Permission / Detection Block -->
+          <div class="bg-surface-50 rounded-2xl p-6 border border-surface-200">
+              @if (geoService.permissionStatus() === 'denied') {
+                  <div class="flex flex-col items-center text-center p-4">
+                      <div class="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center mb-4">
+                          <i class="pi pi-lock text-xl"></i>
+                      </div>
+                      <h3 class="font-bold text-surface-900">Permisos Denegados</h3>
+                      <p class="text-surface-500 text-sm mt-2 max-w-sm">No podemos obtener tu ubicación porque los permisos están bloqueados. Habilítalos en la configuración de tu navegador para continuar.</p>
+                      <button pButton label="Cómo habilitar" icon="pi pi-info-circle" class="p-button-text p-button-secondary mt-2 text-xs"></button>
+                  </div>
+              } @else if (!locationData()) {
+                  <div class="flex flex-col items-center text-center p-4">
+                      <div class="w-12 h-12 bg-blue-50 text-blue-400 rounded-full flex items-center justify-center mb-4">
+                          <i class="pi pi-map-marker text-xl" [class.animate-bounce]="isDetectingLocation()"></i>
+                      </div>
+                      <h3 class="font-bold text-surface-900">Requiere Ubicación</h3>
+                      <p class="text-surface-500 text-sm mt-2 max-w-sm">Para reportar una incidencia con precisión, necesitamos acceder a tu ubicación actual.</p>
+                      <button pButton pRipple 
+                             (click)="requestLocation()" 
+                             [loading]="isDetectingLocation()"
+                             label="Conceder Permiso y Detectar" 
+                             icon="pi pi-compass" 
+                             class="p-button-primary bg-blue-700 border-none font-bold rounded-xl mt-6 px-8"></button>
+                  </div>
+              } @else {
+                  <div class="flex gap-4">
+                      <div class="w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center shadow-lg shrink-0">
+                          <i class="pi pi-map-marker text-xl"></i>
+                      </div>
+                      <div class="flex-1">
+                          <p class="text-xs font-black text-blue-600 uppercase tracking-widest mb-1">Dirección Detectada</p>
+                          <p class="text-surface-900 font-bold leading-tight">{{ locationData()?.address }}</p>
+                          <p class="text-[9px] text-surface-400 mt-1 uppercase tracking-tighter">Data © OpenStreetMap contributors</p>
+                          <div class="flex items-center gap-3 mt-2">
+                              <span class="text-[10px] text-surface-400 font-mono">LAT: {{ locationData()?.lat?.toFixed(6) }}</span>
+                              <span class="text-[10px] text-surface-400 font-mono">LNG: {{ locationData()?.lng?.toFixed(6) }}</span>
+                          </div>
+                      </div>
+                      <button pButton icon="pi pi-refresh" (click)="requestLocation()" class="p-button-text p-button-secondary p-button-sm"></button>
+                  </div>
+              }
+          </div>
+      </section>
+
       <div class="flex flex-col-reverse md:flex-row md:justify-end gap-4 border-t border-surface-100 pt-8 mt-4">
          <button routerLink="/citizen/reports" type="button" pButton pRipple label="Cancelar" class="p-button-text p-button-secondary"></button>
-         <button (click)="submitReport()" pButton pRipple label="Enviar Reporte Cívico" icon="pi pi-send" iconPos="right" [loading]="isSubmitting()" class="p-button-primary bg-blue-700 border-none font-bold rounded-xl px-12 py-4 shadow-lg hover:shadow-blue-500/30 transition-all"></button>
+         <button (click)="submitReport()" 
+                 pButton pRipple 
+                 [disabled]="!locationData() || isDetectingLocation() || isCheckingDuplicity()"
+                 [label]="isSubmitting() ? 'Enviando...' : 'Enviar Reporte Cívico'" 
+                 icon="pi pi-send" 
+                 iconPos="right" 
+                 [loading]="isSubmitting()" 
+                 class="p-button-primary bg-blue-700 border-none font-bold rounded-xl px-12 py-4 shadow-lg hover:shadow-blue-500/30 transition-all"></button>
       </div>
   </div>
+
+  <!-- Duplicity Warning Dialog -->
+  <p-dialog [visible]="showDuplicityWarning()" 
+            [modal]="true" 
+            [closable]="false" 
+            [draggable]="false" 
+            [resizable]="false"
+            header="¡Un momento!" 
+            styleClass="w-full max-w-lg rounded-3xl overflow-hidden border-none shadow-2xl">
+      
+      <div class="flex flex-col items-center text-center p-4">
+          <div class="w-20 h-20 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mb-6">
+              <i class="pi pi-exclamation-triangle text-4xl"></i>
+          </div>
+          
+          <h3 class="text-2xl font-black text-surface-900 mb-2">¿Es este el mismo problema?</h3>
+          <p class="text-surface-600 mb-8 leading-relaxed">
+            Hemos detectado que ya existen reportes similares muy cerca de tu ubicación actual. Ayúdanos a evitar duplicados:
+          </p>
+
+          <div class="w-full flex flex-col gap-3 mb-8">
+              @for (report of nearbyReports().slice(0, 2); track report.id) {
+                  <div class="bg-surface-50 p-4 rounded-2xl border border-surface-100 text-left flex items-start gap-4">
+                      <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
+                          <i class="pi pi-file-edit"></i>
+                      </div>
+                      <div class="overflow-hidden">
+                          <p class="font-bold text-surface-900 truncate">{{ report.title }}</p>
+                          <p class="text-xs text-surface-400 font-bold uppercase tracking-widest mt-0.5">{{ report.category }}</p>
+                      </div>
+                  </div>
+              }
+          </div>
+
+          <div class="flex flex-col w-full gap-3">
+              <button pButton pRipple 
+                      (click)="router.navigate(['/citizen/reports'])" 
+                      label="Sí, es el mismo (No reportar de nuevo)" 
+                      class="p-button-secondary p-button-outlined w-full rounded-xl py-4 font-bold border-2"></button>
+              
+              <button pButton pRipple 
+                      (click)="showDuplicityWarning.set(false)" 
+                      label="No, es un problema diferente" 
+                      class="p-button-primary bg-blue-700 border-none w-full rounded-xl py-4 font-bold shadow-lg"></button>
+          </div>
+      </div>
+  </p-dialog>
 </div>

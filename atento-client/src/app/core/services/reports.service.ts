@@ -52,4 +52,10 @@ export class ReportsService {
   getReport(id: string): Observable<IReport> {
     return this.http.get<IReport>(`${this.apiUrl}/${id}`);
   }
+
+  checkNearbyReports(lat: number, lng: number, category: string): Observable<IReport[]> {
+    return this.http.get<IReport[]>(`${this.apiUrl}/nearby`, {
+      params: { lat: lat.toString(), lng: lng.toString(), category, radius: '50' }
+    });
+  }
 }
