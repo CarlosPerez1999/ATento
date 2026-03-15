@@ -73,11 +73,11 @@
                     <td class="py-6 text-center" (click)="$event.stopPropagation()">
                         <div class="flex items-center justify-center gap-3">
                             <button (click)="viewReport(report.id)" pButton pRipple icon="pi pi-eye" 
-                                    class="p-button-rounded p-button-text p-button-secondary p-button-sm action-btn-view transition-all shadow-sm"
+                                    class="p-button-rounded p-button-text p-button-secondary p-button-sm hover:bg-blue-600 hover:text-white transition-all shadow-sm"
                                     title="Ver Detalles"></button>
                             @if (report.status === 'PENDING') {
                             <button (click)="cancelReport(report, $event)" pButton pRipple icon="pi pi-trash"
-                                class="p-button-rounded p-button-text p-button-danger p-button-sm action-btn-delete transition-all shadow-sm" title="Cancelar Reporte"></button>
+                                class="p-button-rounded p-button-text p-button-danger p-button-sm hover:bg-red-600 hover:text-white transition-all shadow-sm" title="Cancelar Reporte"></button>
                             }
                         </div>
                     </td>
@@ -126,10 +126,10 @@
                         </span>
                         <div class="flex gap-2" (click)="$event.stopPropagation()">
                              <button (click)="viewReport(report.id)" pButton pRipple icon="pi pi-eye" 
-                                class="p-button-rounded p-button-text p-button-secondary p-button-sm action-btn-view shadow-sm"></button>
+                                class="p-button-rounded p-button-text p-button-secondary p-button-sm hover:bg-blue-600 hover:text-white transition-all shadow-sm"></button>
                              @if (report.status === 'PENDING') {
                                 <button (click)="cancelReport(report, $event)" pButton pRipple icon="pi pi-trash"
-                                    class="p-button-rounded p-button-text p-button-danger p-button-sm action-btn-delete shadow-sm"></button>
+                                    class="p-button-rounded p-button-text p-button-danger p-button-sm hover:bg-red-600 hover:text-white transition-all shadow-sm"></button>
                              }
                         </div>
                     </div>

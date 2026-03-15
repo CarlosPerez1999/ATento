@@ -1,46 +1,48 @@
 <div class="flex h-screen bg-surface-50 overflow-hidden">
   <!-- Desktop Sidebar -->
-  <aside class="hidden lg:flex w-64 flex-col bg-white border-r border-surface-200 shadow-sm z-20">
+  <aside class="hidden lg:flex w-20 hover:w-64 flex-col bg-white border-r border-surface-200 shadow-sm z-20 transition-all duration-300 ease-in-out group/sidebar overflow-hidden">
     <!-- Logo -->
-    <div class="h-20 flex items-center px-6 border-b border-surface-100 mt-2">
-      <i class="pi pi-map-marker text-3xl text-blue-700 mr-2"></i>
-      <span class="text-2xl font-black text-surface-900 tracking-tight">AT<span class="text-blue-700">ento</span></span>
+    <div class="h-20 flex items-center px-6 border-b border-surface-100 mt-2 shrink-0">
+      <i class="pi pi-map-marker text-3xl text-blue-700 min-w-[2rem]"></i>
+      <span class="text-2xl font-black text-surface-900 tracking-tight opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 whitespace-nowrap ml-2">AT<span class="text-blue-700">ento</span></span>
     </div>
 
     <!-- Navigation -->
-    <nav class="flex-1 px-4 py-8 space-y-2 overflow-y-auto">
+    <nav class="flex-1 px-3 py-8 space-y-2 overflow-y-auto overflow-x-hidden">
       <a routerLink="/citizen/dashboard" routerLinkActive="bg-blue-50 text-blue-700 font-bold" [routerLinkActiveOptions]="{exact: true}"
-         class="flex items-center gap-3 px-4 py-3 rounded-xl text-surface-600 hover:bg-surface-100 hover:text-surface-900 transition-colors cursor-pointer group">
-        <i class="pi pi-home text-xl group-hover:text-blue-600 transition-colors"></i>
-        <span>Dashboard</span>
+         class="flex items-center gap-4 px-4 py-3 rounded-xl text-surface-600 hover:bg-surface-100 hover:text-surface-900 transition-colors cursor-pointer group">
+        <i class="pi pi-home text-xl group-hover:text-blue-600 transition-colors min-w-[1.25rem]"></i>
+        <span class="whitespace-nowrap opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300">Dashboard</span>
       </a>
 
       <a routerLink="/citizen/reports" routerLinkActive="bg-blue-50 text-blue-700 font-bold" 
-         class="flex items-center gap-3 px-4 py-3 rounded-xl text-surface-600 hover:bg-surface-100 hover:text-surface-900 transition-colors cursor-pointer group">
-        <i class="pi pi-list text-xl group-hover:text-blue-600 transition-colors"></i>
-        <span>Mis Reportes</span>
+         class="flex items-center gap-4 px-4 py-3 rounded-xl text-surface-600 hover:bg-surface-100 hover:text-surface-900 transition-colors cursor-pointer group">
+        <i class="pi pi-list text-xl group-hover:text-blue-600 transition-colors min-w-[1.25rem]"></i>
+        <span class="whitespace-nowrap opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300">Mis Reportes</span>
       </a>
       
-      <a routerLink="/citizen/profile" routerLinkActive="bg-blue-50 text-blue-700 font-bold" class="flex items-center gap-3 px-4 py-3 rounded-xl text-surface-600 hover:bg-surface-100 hover:text-surface-900 transition-colors cursor-pointer group">
-        <i class="pi pi-user text-xl group-hover:text-blue-600 transition-colors"></i>
-        <span>Perfil</span>
+      <a routerLink="/citizen/profile" routerLinkActive="bg-blue-50 text-blue-700 font-bold" 
+         class="flex items-center gap-4 px-4 py-3 rounded-xl text-surface-600 hover:bg-surface-100 hover:text-surface-900 transition-colors cursor-pointer group">
+        <i class="pi pi-user text-xl group-hover:text-blue-600 transition-colors min-w-[1.25rem]"></i>
+        <span class="whitespace-nowrap opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300">Perfil</span>
       </a>
     </nav>
 
     <!-- User & Logout -->
-    <div class="p-4 border-t border-surface-200">
-      <div class="flex items-center justify-between mb-4 px-2">
-        <div class="flex items-center gap-3">
-          <p-avatar [label]="(authService.currentUser()?.firstName?.charAt(0) || 'C') | uppercase" styleClass="bg-blue-100 text-blue-800 font-bold" shape="circle"></p-avatar>
-          <div class="flex flex-col">
-            <span class="text-sm font-bold text-surface-900">{{ authService.currentUser()?.firstName || 'Ciudadano' }}</span>
-            <span class="text-xs text-surface-500">Activo</span>
-          </div>
+    <div class="p-4 border-t border-surface-200 shrink-0">
+      <div class="flex items-center gap-4 px-2 mb-4 overflow-hidden">
+        <p-avatar [label]="(authService.currentUser()?.firstName?.charAt(0) || 'C') | uppercase" 
+                  styleClass="bg-blue-100 text-blue-800 font-bold min-w-[2.5rem]" 
+                  shape="circle"></p-avatar>
+        <div class="flex flex-col opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+          <span class="text-sm font-bold text-surface-900">{{ authService.currentUser()?.firstName || 'Ciudadano' }}</span>
+          <span class="text-xs text-surface-500">Activo</span>
         </div>
       </div>
-      <button pButton pRipple type="button" label="Cerrar Sesión" icon="pi pi-sign-out" 
-        class="w-full text-left p-button-text p-button-secondary text-surface-600 bg-transparent hover:bg-surface-100 rounded-lg py-3 px-4"
+      <button pButton pRipple type="button" icon="pi pi-sign-out" 
+        class="w-full text-left p-button-text p-button-secondary text-surface-600 bg-transparent hover:bg-surface-100 rounded-lg py-3 px-4 flex items-center gap-4"
         (click)="logout()">
+        <span class="whitespace-nowrap opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300">Cerrar Sesión</span>
       </button>
     </div>
   </aside>
