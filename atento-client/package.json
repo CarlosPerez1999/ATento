@@ -9,7 +9,7 @@
     "test": "ng test"
   },
   "private": true,
-  "packageManager": "npm@10.8.2",
+  "packageManager": "pnpm@10.32.1",
   "dependencies": {
     "@angular/animations": "^21.2.3",
     "@angular/common": "^21.2.0",
@@ -19,7 +19,7 @@
     "@angular/platform-browser": "^21.2.0",
     "@angular/router": "^21.2.0",
     "@angular/service-worker": "^21.2.0",
-    "@atento/shared": "*",
+    "@atento/shared": "workspace:*",
     "@primeuix/themes": "^2.0.3",
     "leaflet": "^1.9.4",
     "ngx-socket-io": "^4.10.0",
@@ -36,7 +36,9 @@
     "@angular/compiler-cli": "^21.2.0",
     "@tailwindcss/postcss": "^4.1.12",
     "@types/leaflet": "^1.9.21",
+    "@types/leaflet.heat": "^0.2.5",
     "jsdom": "^28.0.0",
+    "leaflet.heat": "^0.2.0",
     "postcss": "^8.5.3",
     "prettier": "^3.8.1",
     "tailwindcss": "^4.1.12",

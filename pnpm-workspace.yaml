@@ -1,0 +1,4 @@
+packages:
+  - 'atento-client'
+  - 'atento-server'
+  - 'shared'
