@@ -25,8 +25,7 @@ export class ReportsController {
   }
 
   @Get()
-  @Roles(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Get all reports (Admin only)' })
+  @ApiOperation({ summary: 'Get all reports (Global Map)' })
   findAll() {
     return this.reportsService.findAll();
   }
