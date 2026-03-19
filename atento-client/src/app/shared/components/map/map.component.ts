@@ -35,9 +35,14 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
       if (changes['reports'] || changes['mode']) {
         this.updateMapContent();
       }
-      if (changes['center']) {
-        // Only set view if it's a significant change or not the default default
-        this.map.setView(this.center, this.zoom);
+      if (changes['center'] && !changes['center'].isFirstChange()) {
+        const curr = changes['center'].currentValue;
+        const prev = changes['center'].previousValue;
+        
+        // Evitar recientes bloqueos y reseteos forzosos del usuario durante changeDetection
+        if (!prev || curr[0] !== prev[0] || curr[1] !== prev[1]) {
+          this.map.setView(this.center, this.zoom);
+        }
       }
     }
   }
@@ -86,6 +91,9 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   private renderMarkers() {
     this.reports.forEach(report => {
+      if (!report.location || typeof report.location.lat !== 'number' || typeof report.location.lng !== 'number') {
+        return; // Skip invalid reports
+      }
       const icon = this.getCategoryIcon(report.category);
       const marker = L.marker([report.location.lat, report.location.lng], { icon });
       
@@ -112,7 +120,8 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
   private renderHeatmap() {
     if (!this.map) return;
     
-    const heatPoints = this.reports.map(r => [r.location.lat, r.location.lng, 0.5] as [number, number, number]);
+    const validReports = this.reports.filter(r => r.location && typeof r.location.lat === 'number' && typeof r.location.lng === 'number');
+    const heatPoints = validReports.map(r => [r.location.lat, r.location.lng, 0.5] as [number, number, number]);
     
     // @ts-ignore - heatLayer comes from leaflet.heat plugin
     this.heatLayer = L.heatLayer(heatPoints, {
