@@ -34,7 +34,7 @@ import { ReportCategory, ICreateReportDto, IReport } from '@atento/shared';
 export class NewReportComponent implements OnInit {
   private reportsService = inject(ReportsService);
   private notificationService = inject(NotificationService);
-  private router = inject(Router);
+  public router = inject(Router);
   public geoService = inject(GeolocationService);
 
   title = signal('');
