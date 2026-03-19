@@ -1,5 +1,7 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength, Matches } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, MinLength, Matches, ValidateNested, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
 import { IRegisterDto, VALIDATION } from '@atento/shared';
+import { CreateAddressDto } from './create-address.dto';
 
 export class CreateUserDto implements IRegisterDto {
   @IsEmail({}, { message: 'Invalid email address' })
@@ -22,4 +24,9 @@ export class CreateUserDto implements IRegisterDto {
   @IsString()
   @IsNotEmpty({ message: 'Last name is required' })
   lastName: string;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => CreateAddressDto)
+  address?: CreateAddressDto;
 }
