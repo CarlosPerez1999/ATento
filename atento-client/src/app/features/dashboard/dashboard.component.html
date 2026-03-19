@@ -94,12 +94,12 @@
            </div>
            
            <div class="flex-1 min-h-[450px] bg-white rounded-[2.5rem] border border-surface-200 shadow-xl relative overflow-hidden group">
-               <app-map [reports]="reportsValue" [mode]="mapMode()" [center]="mapCenter" [zoom]="15"></app-map>
+               <app-map [reports]="allReportsValue" [mode]="mapMode()" [center]="mapCenter" [zoom]="15"></app-map>
                
                <!-- Floating Overlay Info -->
                <div class="absolute bottom-6 left-6 z-[1000] bg-white/80 backdrop-blur-md px-4 py-2 rounded-xl border border-white shadow-lg pointer-events-none">
-                   <p class="text-[10px] font-black uppercase text-blue-600 tracking-widest">Estado</p>
-                   <p class="text-xs font-bold text-surface-900">Mostrando {{ reportsValue.length }} reportes activos</p>
+                   <p class="text-[10px] font-black uppercase text-blue-600 tracking-widest">Global</p>
+                   <p class="text-xs font-bold text-surface-900">Mostrando {{ allReportsValue.length }} reportes en tu ciudad</p>
                </div>
            </div>
         </div>

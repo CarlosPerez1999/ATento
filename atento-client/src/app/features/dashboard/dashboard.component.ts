@@ -36,6 +36,7 @@ export class DashboardComponent {
   // Readonly Signal from service
   reports = this.reportsService.reports;
   reportsResource = this.reportsService.reportsResource;
+  allReportsResource = this.reportsService.allReportsResource;
 
   mapMode = signal<'markers' | 'heatmap'>('markers');
   mapModeOptions = [
@@ -54,6 +55,10 @@ export class DashboardComponent {
 
   get reportsValue(): IReport[] {
     return this.reports() || [];
+  }
+
+  get allReportsValue(): IReport[] {
+    return this.allReportsResource.value() || [];
   }
 
   get activeReportsCount(): number {

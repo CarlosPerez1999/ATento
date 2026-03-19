@@ -15,6 +15,7 @@ export class ReportsService {
 
   // Using standard httpResource for declarative fetching (Signals)
   reportsResource = httpResource<IReport[]>(() => `${this.apiUrl}/my-reports`);
+  allReportsResource = httpResource<IReport[]>(() => this.apiUrl);
 
   constructor() {
     // Sync resource value to our local signal
