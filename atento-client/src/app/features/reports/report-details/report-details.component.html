@@ -120,15 +120,15 @@
                 <div class="bg-linear-to-br from-blue-700 to-blue-900 rounded-4xl p-8 text-white shadow-xl shadow-blue-500/20">
                     <h2 class="text-xs font-black text-blue-100 uppercase tracking-widest mb-6">Reportado por</h2>
                     <div class="flex items-center gap-4">
-                        <p-avatar [label]="(authService.currentUser()?.firstName?.charAt(0) || 'C') | uppercase" 
+                        <p-avatar [label]="(report()?.user?.firstName?.charAt(0) || 'C') | uppercase" 
                                   size="large" 
                                   styleClass="bg-white/20 text-white font-black border border-white/20" 
                                   shape="circle"></p-avatar>
                         <div>
                             <p class="font-bold text-xl leading-none mb-1">
-                                {{ authService.currentUser()?.firstName }} {{ authService.currentUser()?.lastName }}
+                                {{ report()?.user?.firstName || 'Ciudadano' }} {{ report()?.user?.lastName || 'Anónimo' }}
                             </p>
-                            <p class="text-blue-200 text-sm opacity-80">ID: {{ authService.currentUser()?.id?.slice(-6) }}</p>
+                            <p class="text-blue-200 text-sm opacity-80">ID: {{ report()?.user?.id?.slice(-6) || '------' }}</p>
                         </div>
                     </div>
                     <div class="mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
