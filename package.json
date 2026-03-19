@@ -5,7 +5,7 @@
   "scripts": {
     "start:client": "pnpm --filter atento-client start",
     "start:server": "pnpm --filter atento-server start",
-    "start:all": "pnpm --filter atento-server start && pnpm --filter atento-client start",
+    "start:all": "pnpm -r --parallel --filter atento-server --filter atento-client run start",
     "build:all": "pnpm recursive build",
     "test:all": "pnpm recursive test"
   },
