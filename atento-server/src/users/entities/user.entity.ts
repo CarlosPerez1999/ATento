@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToOne, JoinColumn } from 'typeorm';
 import { IUser, UserRole } from '@atento/shared';
+import { Address } from './address.entity';
 
 @Entity('users')
 export class User implements IUser {
@@ -27,6 +28,10 @@ export class User implements IUser {
 
   @Column({ type: 'text', nullable: true, select: false })
   refreshToken: string | null;
+
+  @OneToOne(() => Address, { cascade: true, eager: true, nullable: true })
+  @JoinColumn()
+  address?: Address;
 
   @CreateDateColumn()
   createdAt: Date;
